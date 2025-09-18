@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compatibilité Windows 11 - Nouveaux Équipements</title>
+    <style>
+        :root {
+            --compatible-color: #2ecc71;
+            --not-compatible-color: #e74c3c;
+            --uncertain-color: #f39c12;
+            --primary-color: #3498db;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --text-color: #333;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, var(--dark-color), #1a2530);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+        }
+        
+        .description {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        .summary {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .summary-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+        }
+        
+        .summary-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .compatible {
+            border-top: 5px solid var(--compatible-color);
+        }
+        
+        .not-compatible {
+            border-top: 5px solid var(--not-compatible-color);
+        }
+        
+        .uncertain {
+            border-top: 5px solid var(--uncertain-color);
+        }
+        
+        .number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .compatible .number {
+            color: var(--compatible-color);
+        }
+        
+        .not-compatible .number {
+            color: var(--not-compatible-color);
+        }
+        
+        .uncertain .number {
+            color: var(--uncertain-color);
+        }
+        
+        .filters {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .filter-btn {
+            background: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
+        }
+        
+        .inventory-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+        
+        .inventory-table th, 
+        .inventory-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .inventory-table th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        
+        .inventory-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .inventory-table tr:hover {
+            background-color: #f1f5f9;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .status-compatible {
+            background-color: #e8f8ef;
+            color: var(--compatible-color);
+        }
+        
+        .status-not-compatible {
+            background-color: #fdedec;
+            color: var(--not-compatible-color);
+        }
+        
+        .status-uncertain {
+            background-color: #fef9e7;
+            color: var(--uncertain-color);
+        }
+        
+        .recommendation {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-top: 30px;
+        }
+        
+        .recommendation h2 {
+            color: var(--dark-color);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .recommendation ul {
+            padding-left: 20px;
+            margin: 15px 0;
+        }
+        
+        .recommendation li {
+            margin-bottom: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            background-color: var(--dark-color);
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .summary {
+                flex-direction: column;
+            }
+            
+            .inventory-table th, 
+            .inventory-table td {
+                padding: 8px 10px;
+                font-size: 0.9rem;
+            }
+            
+            .status {
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Compatibilité Windows 11 - Nouveaux Équipements</h1>
+            <p class="description">Analyse de compatibilité des équipements supplémentaires avec Windows 11</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="summary">
+            <div class="summary-card compatible">
+                <h2>Compatibles</h2>
+                <div class="number">7</div>
+                <p>PC peuvent être mis à jour</p>
+            </div>
+            
+            <div class="summary-card not-compatible">
+                <h2>Non Compatibles</h2>
+                <div class="number">37</div>
+                <p>PC ne peuvent pas être mis à jour</p>
+            </div>
+            
+            <div class="summary-card uncertain">
+                <h2>Incertains</h2>
+                <div class="number">8</div>
+                <p>Nécessitent une vérification</p>
+            </div>
+        </div>
+        
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">Tous</button>
+            <button class="filter-btn" data-filter="compatible">Compatibles</button>
+            <button class="filter-btn" data-filter="not-compatible">Non Compatibles</button>
+            <button class="filter-btn" data-filter="uncertain">Incertains</button>
+        </div>
+        
+        <div class="table-container">
+            <table class="inventory-table">
+                <thead>
+                    <tr>
+                        <th>Nom du poste</th>
+                        <th>Fabricant</th>
+                        <th>Modèle</th>
+                        <th>Processeur</th>
+                        <th>Statut</th>
+                        <th>Raison</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="not-compatible">
+                        <td>D0390B</td>
+                        <td>DELL</td>
+                        <td>OptiPlex 390</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-not-compatible">Non Compatible</span></td>
+                        <td>Modèle 2011, processeur trop ancien (2ème/3ème génération)</td>
+                    </tr>
+                    <tr class="not-compatible">
+                        <td>DL5580B</td>
+                        <td>DELL</td>
+                        <td>Latitude 5580</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-not-compatible">Non Compatible</span></td>
+                        <td>Modèle 2017, probablement 7ème génération (non compatible)</td>
+                    </tr>
+                    <tr class="compatible">
+                        <td>DOP7090D</td>
+                        <td>DELL</td>
+                        <td>OptiPlex 7090</td>
+                        <td>11th Gen Intel i5-11500</td>
+                        <td><span class="status status-compatible">Compatible</span></td>
+                        <td>11ème génération, compatible</td>
+                    </tr>
+                    <tr class="compatible">
+                        <td>DOP7090C</td>
+                        <td>DELL</td>
+                        <td>OptiPlex 7090</td>
+                        <td>11th Gen Intel i5-11500</td>
+                        <td><span class="status status-compatible">Compatible</span></td>
+                        <td>11ème génération, compatible</td>
+                    </tr>
+                    <tr class="uncertain">
+                        <td>3060-160200186</td>
+                        <td>GANTRY</td>
+                        <td>EE06 INGERSOLL</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-uncertain">Incertain</span></td>
+                        <td>Équipement spécialisé, nécessite vérification</td>
+                    </tr>
+                    <tr class="not-compatible">
+                        <td>DO3020A</td>
+                        <td>DELL</td>
+                        <td>Optiplex 3020</td>
+                        <td>Intel i5-4590</td>
+                        <td><span class="status status-not-compatible">Non Compatible</span></td>
+                        <td>4ème génération (Haswell), non compatible</td>
+                    </tr>
+                    <tr class="compatible">
+                        <td>DOP7090F</td>
+                        <td>DELL</td>
+                        <td>OptiPlex 7090</td>
+                        <td>11th Gen Intel i9-11900</td>
+                        <td><span class="status status-compatible">Compatible</span></td>
+                        <td>11ème génération, compatible</td>
+                    </tr>
+                    <tr class="uncertain">
+                        <td>26FI05</td>
+                        <td>SODICK</td>
+                        <td>SODICK Fil SLC 400G</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-uncertain">Incertain</span></td>
+                        <td>Équipement spécialisé, nécessite vérification</td>
+                    </tr>
+                    <tr class="not-compatible">
+                        <td>DPT3500P</td>
+                        <td>DELL</td>
+                        <td>Precision T3500</td>
+                        <td>Xeon W3503</td>
+                        <td><span class="status status-not-compatible">Non Compatible</span></td>
+                        <td>Processeur trop ancien (2010), non compatible</td>
+                    </tr>
+                    <tr class="not-compatible">
+                        <td>DPT5810G</td>
+                        <td>DELL</td>
+                        <td>Precision T5810</td>
+                        <td>Xeon E5-1660 v3</td>
+                        <td><span class="status status-not-compatible">Non Compatible</span></td>
+                        <td>Architecture Haswell, non compatible</td>
+                    </tr>
+                    <tr class="compatible">
+                        <td>DPT5820C</td>
+                        <td>DELL</td>
+                        <td>Precision Tower 5820</td>
+                        <td>Xeon W-2223</td>
+                        <td><span class="status status-compatible">Compatible</span></td>
+                        <td>Processeur supporté, compatible</td>
+                    </tr>
+                    <tr class="uncertain">
+                        <td>26FI04</td>
+                        <td>SODICK</td>
+                        <td>SODICK FIL ALC 400P</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-uncertain">Incertain</span></td>
+                        <td>Équipement spécialisé, nécessite vérification</td>
+                    </tr>
+                    <tr class="not-compatible">
+                        <td>UC00012</td>
+                        <td>DELL</td>
+                        <td>Optiplex 6030</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-not-compatible">Non Compatible</span></td>
+                        <td>Modèle 2019, mais si CPU < 8th Gen, non compatible</td>
+                    </tr>
+                    <tr class="not-compatible">
+                        <td>DPT3600A</td>
+                        <td>DELL</td>
+                        <td>Precision T3600</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-not-compatible">Non Compatible</span></td>
+                        <td>Modèle 2013, processeur trop ancien</td>
+                    </tr>
+                    <tr class="not-compatible">
+                        <td>DPT3610A</td>
+                        <td>DELL</td>
+                        <td>Precision T3610</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-not-compatible">Non Compatible</span></td>
+                        <td>Modèle 2014, processeur trop ancien</td>
+                    </tr>
+                    <tr class="uncertain">
+                        <td>CU14</td>
+                        <td>MAZAK</td>
+                        <td>Fraiseuse MAZAK Nexus 510 C</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-uncertain">Incertain</span></td>
+                        <td>Équipement spécialisé, nécessite vérification</td>
+                    </tr>
+                    <tr class="uncertain">
+                        <td>CU13</td>
+                        <td>DMU50</td>
+                        <td>Fraiseuse DMG DMU 50 eco</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-uncertain">Incertain</span></td>
+                        <td>Équipement spécialisé, nécessite vérification</td>
+                    </tr>
+                    <tr class="not-compatible">
+                        <td>DPT5810B</td>
+                        <td>DELL</td>
+                        <td>Precision T5810</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-not-compatible">Non Compatible</span></td>
+                        <td>Modèle 2016, probablement processeur non compatible</td>
+                    </tr>
+                    <tr class="not-compatible">
+                        <td>DPT3610C</td>
+                        <td>DELL</td>
+                        <td>Precision T3610</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-not-compatible">Non Compatible</span></td>
+                        <td>Modèle 2014, processeur trop ancien</td>
+                    </tr>
+                    <tr class="compatible">
+                        <td>DOP7090A</td>
+                        <td>DELL</td>
+                        <td>OptiPlex 7090</td>
+                        <td>11th Gen Intel i5 vPro</td>
+                        <td><span class="status status-compatible">Compatible</span></td>
+                        <td>11ème génération, compatible</td>
+                    </tr>
+                    <tr class="compatible">
+                        <td>DOP7090B</td>
+                        <td>DELL</td>
+                        <td>OptiPlex 7090</td>
+                        <td>11th Gen Intel i5 vPro</td>
+                        <td><span class="status status-compatible">Compatible</span></td>
+                        <td>11ème génération, compatible</td>
+                    </tr>
+                    <tr class="uncertain">
+                        <td>Hermle_C400</td>
+                        <td>HERMLE</td>
+                        <td>Fraiseuse Hermle</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-uncertain">Incertain</span></td>
+                        <td>Équipement spécialisé, nécessite vérification</td>
+                    </tr>
+                    <tr class="uncertain">
+                        <td>Hermle_C250</td>
+                        <td>HERMLE</td>
+                        <td>Fraiseuse Hermle C250</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-uncertain">Incertain</span></td>
+                        <td>Équipement spécialisé, nécessite vérification</td>
+                    </tr>
+                    <tr class="compatible">
+                        <td>DPMT3640A</td>
+                        <td>DELL</td>
+                        <td>Precision 3640</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-compatible">Compatible</span></td>
+                        <td>Modèle 2020, probablement compatible</td>
+                    </tr>
+                    <tr class="not-compatible">
+                        <td>DLE6410D</td>
+                        <td>DELL</td>
+                        <td>Latitude E6410</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-not-compatible">Non Compatible</span></td>
+                        <td>Modèle 2010, processeur trop ancien</td>
+                    </tr>
+                    <tr class="not-compatible">
+                        <td>UC00002</td>
+                        <td>DELL</td>
+                        <td>Precision T3630</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-not-compatible">Non Compatible</span></td>
+                        <td>Modèle 2020, mais si CPU < 8th Gen, non compatible</td>
+                    </tr>
+                    <tr class="uncertain">
+                        <td>NL251IJ5151</td>
+                        <td>Inconnu</td>
+                        <td>Inconnu</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-uncertain">Incertain</span></td>
+                        <td>Information insuffisante</td>
+                    </tr>
+                    <tr class="uncertain">
+                        <td>MAZATROL-PC</td>
+                        <td>Inconnu</td>
+                        <td>Inconnu</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-uncertain">Incertain</span></td>
+                        <td>Information insuffisante</td>
+                    </tr>
+                    <tr class="compatible">
+                        <td>UC-MATRIX</td>
+                        <td>DELL</td>
+                        <td>OptiPlex 3000</td>
+                        <td>Intel i5-12500</td>
+                        <td><span class="status status-compatible">Compatible</span></td>
+                        <td>12ème génération, compatible</td>
+                    </tr>
+                    <tr class="not-compatible">
+                        <td>CV3200-PC</td>
+                        <td>DELL</td>
+                        <td>Précision T3620</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-not-compatible">Non Compatible</span></td>
+                        <td>Modèle 2017, probablement processeur non compatible</td>
+                    </tr>
+                    <tr class="not-compatible">
+                        <td>SMARTSCOPE_OGP</td>
+                        <td>OGP</td>
+                        <td>Optiplex ARTS</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-not-compatible">Non Compatible</span></td>
+                        <td>Windows XP, matériel trop ancien</td>
+                    </tr>
+                    <tr class="not-compatible">
+                        <td>DPT5820D</td>
+                        <td>DELL</td>
+                        <td>Precision T5820</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-not-compatible">Non Compatible</span></td>
+                        <td>Information insuffisante</td>
+                    </tr>
+                    <tr class="not-compatible">
+                        <td>TESA-PC</td>
+                        <td>DELL</td>
+                        <td>Optiplex 330</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-not-compatible">Non Compatible</span></td>
+                        <td>Windows XP, matériel trop ancien</td>
+                    </tr>
+                    <tr class="not-compatible">
+                        <td>DO7040A1</td>
+                        <td>DELL</td>
+                        <td>Optiplex 7040</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-not-compatible">Non Compatible</span></td>
+                        <td>Modèle 2016, probablement 6ème/7ème génération (non compatible)</td>
+                    </tr>
+                    <tr class="not-compatible">
+                        <td>DPT3500N</td>
+                        <td>DELL</td>
+                        <td>Precision T3500</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-not-compatible">Non Compatible</span></td>
+                        <td>Modèle 2011, processeur trop ancien</td>
+                    </tr>
+                    <tr class="not-compatible">
+                        <td>DO7060B</td>
+                        <td>DELL</td>
+                        <td>Optiplex 7060</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-not-compatible">Non Compatible</span></td>
+                        <td>Modèle 2018, mais si CPU < 8th Gen, non compatible</td>
+                    </tr>
+                    <tr class="not-compatible">
+                        <td>HPPRO6305A</td>
+                        <td>HP</td>
+                        <td>Compaq Pro 6305</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-not-compatible">Non Compatible</span></td>
+                        <td>Modèle ancien, probablement non compatible</td>
+                    </tr>
+                    <tr class="not-compatible">
+                        <td>DD4550A</td>
+                        <td>DELL</td>
+                        <td>Dimension 4550</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-not-compatible">Non Compatible</span></td>
+                        <td>Modèle 2003, beaucoup trop ancien</td>
+                    </tr>
+                    <tr class="not-compatible">
+                        <td>DL600A</td>
+                        <td>DELL</td>
+                        <td>Latitude D600</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-not-compatible">Non Compatible</span></td>
+                        <td>Modèle 2003, beaucoup trop ancien</td>
+                    </tr>
+                    <tr class="not-compatible">
+                        <td>DOGX520K1</td>
+                        <td>DELL</td>
+                        <td>OptiPlex GX520</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-not-compatible">Non Compatible</span></td>
+                        <td>Modèle 2006, beaucoup trop ancien</td>
+                    </tr>
+                    <tr class="not-compatible">
+                        <td>HP280G1A</td>
+                        <td>HP</td>
+                        <td>HP 280 G1 MT</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-not-compatible">Non Compatible</span></td>
+                        <td>Modèle 2014, probablement 4ème génération (non compatible)</td>
+                    </tr>
+                    <tr class="uncertain">
+                        <td>UC00004</td>
+                        <td>HP</td>
+                        <td>Inconnu</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-uncertain">Incertain</span></td>
+                        <td>Information insuffisante</td>
+                    </tr>
+                    <tr class="not-compatible">
+                        <td>HPXV44A</td>
+                        <td>HP</td>
+                        <td>XW 4400</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-not-compatible">Non Compatible</span></td>
+                        <td>Modèle 2007, beaucoup trop ancien</td>
+                    </tr>
+                    <tr class="not-compatible">
+                        <td>DLE6540B</td>
+                        <td>DELL</td>
+                        <td>Latitude E6540</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-not-compatible">Non Compatible</span></td>
+                        <td>Modèle 2014, probablement 4ème génération (non compatible)</td>
+                    </tr>
+                    <tr class="not-compatible">
+                        <td>DO390A</td>
+                        <td>DELL</td>
+                        <td>OptiPlex 390</td>
+                        <td>Info manquante</td>
+                        <td><span class="status status-not-compatible">Non Compatible</span></td>
+                        <td>Modèle 2011, processeur trop ancien</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="recommendation">
+            <h2>Recommandations</h2>
+            <p>Sur la base de l'analyse de vos équipements supplémentaires, voici les recommandations :</p>
+            <ul>
+                <li>Les PC <strong>OptiPlex 7090</strong> et <strong>OptiPlex 3000</strong> sont compatibles avec Windows 11 et peuvent être mis à jour.</li>
+                <li>La majorité de vos équipements (37 sur 52) sont <strong>non compatibles</strong> avec Windows 11 et devront être remplacés.</li>
+                <li>Pour les équipements spécialisés (machines-outils), vérifiez la compatibilité avec les fournisseurs avant toute mise à jour.</li>
+                <li>Priorisez le remplacement des machines les plus anciennes (avant 2018) qui sont de toute manière en fin de vie.</li>
+            </ul>
+            <p>Pour vérifier la compatibilité d'un PC spécifique, utilisez l'outil <strong>PC Health Check</strong> de Microsoft.</p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>Analyse de Compatibilité Windows 11 | Dernière mise à jour: Septembre 2023</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const tableRows = document.querySelectorAll('.inventory-table tbody tr');
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const filter = this.getAttribute('data-filter');
+                    
+                    // Mettre à jour les boutons actifs
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Filtrer les lignes du tableau
+                    tableRows.forEach(row => {
+                        if (filter === 'all') {
+                            row.style.display = '';
+                        } else if (row.classList.contains(filter)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
